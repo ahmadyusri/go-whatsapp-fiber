@@ -22,7 +22,7 @@ func NewWhatsappHandler(whatsappUsecase domain.WhatsappUsecase, rPublic, rPrivat
 		Validate: utils.NewValidator(),
 	}
 
-	rWa := rPublic.Group("/whatsapp")
+	rWa := rPrivate.Group("/")
 	rWa.Post("/login", handler.Login)
 	rWa.Get("/info", handler.GetInfo)
 	rWa.Post("/send-text", handler.SendText)
@@ -41,6 +41,7 @@ func NewWhatsappHandler(whatsappUsecase domain.WhatsappUsecase, rPublic, rPrivat
 // @Tags Whatsapp
 // @Accept mpfd
 // @Produce png
+// @Param Authorization header string true "JWT Token"
 // @Param reconnect formData int false "Reconnect, default to 50"
 // @Param timeout formData int false "QR Scan timeout in second, default 20"
 // @Param client_name_long formData string false "Long client name, default: Klik Adzkia Go Whatsapp REST Api Fiber"
@@ -103,6 +104,7 @@ func (w *WhatsappHandler) Login(c *fiber.Ctx) error {
 // @Description Get info metadata.
 // @Tags Info
 // @Produce json
+// @Param Authorization header string true "JWT Token"
 // @Success 200 {object} domain.JSONResult{data=domain.WaWeb,message=string} "Description"
 // @Failure 422 {object} []domain.HTTPErrorValidation
 // @Failure 400 {object} domain.HTTPError
@@ -127,6 +129,7 @@ func (w *WhatsappHandler) GetInfo(c *fiber.Ctx) error {
 // @Tags Messaging
 // @Accept mpfd
 // @Produce json
+// @Param Authorization header string true "JWT Token"
 // @Param msisdn formData string true "Destination number. eg: 6281255423 or group_creator-timstamp_created -> 6281271471566-1619679643 for group"
 // @Param text formData string true "Message text"
 // @Param msg_quoted_id formData string false "Message Quoted ID"
@@ -168,6 +171,7 @@ func (w *WhatsappHandler) SendText(c *fiber.Ctx) error {
 // @Tags Messaging
 // @Accept mpfd
 // @Produce json
+// @Param Authorization header string true "JWT Token"
 // @Param msisdn formData string true "Destination number. eg: 6281255423 or group_creator-timstamp_created -> 6281271471566-1619679643 for group"
 // @Param latitude formData number false "Latitude. eg: -5.3836767"
 // @Param longitude formData number false "Longitude. eg: 105.2937439"
@@ -217,6 +221,7 @@ func (w *WhatsappHandler) SendLocation(c *fiber.Ctx) error {
 // @Tags Messaging
 // @Accept x-www-form-urlencoded
 // @Produce json
+// @Param Authorization header string true "JWT Token"
 // @Param msisdn formData string true "Destination number. eg: 6281255423 or group_creator-timstamp_created -> 6281271471566-1619679643 for group"
 // @Param image_file formData file true "Image file"
 // @Param msg_quoted_id formData string false "Message Quoted ID"
@@ -266,6 +271,7 @@ func (w *WhatsappHandler) SendImage(c *fiber.Ctx) error {
 // @Tags Messaging
 // @Accept x-www-form-urlencoded
 // @Produce json
+// @Param Authorization header string true "JWT Token"
 // @Param msisdn formData string true "Destination number. eg: 6281255423 or group_creator-timstamp_created -> 6281271471566-1619679643 for group"
 // @Param audio_file formData file true "Audio file"
 // @Param msg_quoted_id formData string false "Message Quoted ID"
@@ -315,6 +321,7 @@ func (w *WhatsappHandler) SendAudio(c *fiber.Ctx) error {
 // @Tags Messaging
 // @Accept x-www-form-urlencoded
 // @Produce json
+// @Param Authorization header string true "JWT Token"
 // @Param msisdn formData string true "Destination number. eg: 6281255423 or group_creator-timstamp_created -> 6281271471566-1619679643 for group"
 // @Param video_file formData file true "Video file"
 // @Param msg_quoted_id formData string false "Message Quoted ID"
@@ -364,6 +371,7 @@ func (w *WhatsappHandler) SendVideo(c *fiber.Ctx) error {
 // @Tags Messaging
 // @Accept x-www-form-urlencoded
 // @Produce json
+// @Param Authorization header string true "JWT Token"
 // @Param msisdn formData string true "Destination number. eg: 6281255423 or group_creator-timstamp_created -> 6281271471566-1619679643 for group"
 // @Param document_file formData file true "Document file"
 // @Param msg_quoted_id formData string false "Message Quoted ID"
@@ -412,6 +420,7 @@ func (w *WhatsappHandler) SendDocument(c *fiber.Ctx) error {
 // @Description Get group metadata by phone number.
 // @Tags Info
 // @Produce json
+// @Param Authorization header string true "JWT Token"
 // @Param jid path string true "JID. eg: group_creator-timstamp_created -> 6281271471566-1619679643"
 // @Success 200 {object} domain.JSONResult{data=domain.WaGroup,message=string} "Description"
 // @Failure 422 {object} []domain.HTTPErrorValidation
@@ -447,6 +456,7 @@ func (w *WhatsappHandler) Groups(c *fiber.Ctx) error {
 // @Summary logout whatsapp web
 // @Tags Whatsapp
 // @Produce json
+// @Param Authorization header string true "JWT Token"
 // @Success 200 {object} domain.JSONResult{data=string,message=string} "Description"
 // @Failure 422 {object} []domain.HTTPErrorValidation
 // @Failure 400 {object} domain.HTTPError

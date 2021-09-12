@@ -26,11 +26,34 @@ func init() {
 		os.Setenv("WHATSAPP_CLIENT_NAME_LONG", "Klik Adzkia Whatsapp Rest API")
 	}
 
+	if os.Getenv("SERVER_KEY") == "" {
+		exitf("SERVER_KEY env is required")
+	}
 	if os.Getenv("SERVER_URL") == "" {
 		exitf("SERVER_URL env is required")
 	}
 	if os.Getenv("SERVER_READ_TIMEOUT") == "" {
 		exitf("SERVER_READ_TIMEOUT env is required")
+	}
+
+	if os.Getenv("DB_HOST") == "" {
+		exitf("DB_HOST env is required")
+	}
+
+	if os.Getenv("DB_USERNAME") == "" {
+		exitf("DB_USERNAME env is required")
+	}
+
+	if _, exists := os.LookupEnv("DB_PASSWORD"); !exists {
+		exitf("DB_PASSWORD env is required")
+	}
+
+	if os.Getenv("DB_NAME") == "" {
+		exitf("DB_NAME env is required")
+	}
+
+	if os.Getenv("DB_PORT") == "" {
+		exitf("DB_PORT env is required")
 	}
 
 	if os.Getenv("JWT_SECRET_KEY") == "" {
@@ -105,20 +128,20 @@ func main() {
 	config := configs.FiberConfig()
 	app := fiber.New(config)
 
-	// Swagger handler
-	_frontendHttpDelivery.NewSwaggerHandler(app)
-
 	middL := _frontendDeliveryMiddleware.InitMiddleware(app)
 	app.Use(middL.CORS())
 	app.Use(middL.LOGGER())
 
 	// router for public access
 	rPublic := app.Group("/api/v1")
-
 	// router for private access
-	rPrivate := app.Group("/api/v1/auth", middL.JWT())
+	rPrivate := app.Group("/api/v1/whatsapp", middL.JWT())
 
+	_frontendHttpDelivery.NewAuthHandler(rPublic)
 	_frontendHttpDelivery.NewWhatsappHandler(whatsappUsecae, rPublic, rPrivate)
+
+	// Swagger handler
+	_frontendHttpDelivery.NewSwaggerHandler(app)
 
 	//_frontendHttpDelivery.NewDebugHandler(rPublic, rPublic)
 

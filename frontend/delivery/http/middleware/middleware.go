@@ -1,11 +1,12 @@
 package middleware
 
 import (
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	jwtMiddleware "github.com/gofiber/jwt/v2"
-	"os"
 )
 
 // GoMiddleware represent the data-struct for middleware
