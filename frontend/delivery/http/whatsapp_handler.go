@@ -1,13 +1,14 @@
 package http
 
 import (
+	"os"
+	"strconv"
+
 	"github.com/cooljar/go-whatsapp-fiber/domain"
 	"github.com/cooljar/go-whatsapp-fiber/utils"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/skip2/go-qrcode"
-	"os"
-	"strconv"
 )
 
 type WhatsappHandler struct {
@@ -42,7 +43,7 @@ func NewWhatsappHandler(whatsappUsecase domain.WhatsappUsecase, rPublic, rPrivat
 // @Produce png
 // @Param reconnect formData int false "Reconnect, default to 50"
 // @Param timeout formData int false "QR Scan timeout in second, default 20"
-// @Param client_name_long formData string false "Long client name, default: Go Whatsapp REST Api Fiber"
+// @Param client_name_long formData string false "Long client name, default: Klik Adzkia Go Whatsapp REST Api Fiber"
 // @Param client_name_short formData string false "Short client name, default: Go Whatsapp"
 // @Param client_version_major formData int false "Whatsapp Client major version, default: 2"
 // @Param client_version_minor formData int false "Whatsapp Client minor version, default: 2126"
@@ -56,8 +57,8 @@ func NewWhatsappHandler(whatsappUsecase domain.WhatsappUsecase, rPublic, rPrivat
 func (w *WhatsappHandler) Login(c *fiber.Ctx) error {
 	reconnect := c.FormValue("reconnect", "50")
 	timeout := c.FormValue("timeout", "20")
-	clientNameLong := c.FormValue("client_name_long", "Cooljar Whatsapp REST Api")
-	clientNameShort := c.FormValue("client_name_short", "Cooljar Whatsapp")
+	clientNameLong := c.FormValue("client_name_long", os.Getenv("WHATSAPP_CLIENT_NAME_LONG"))
+	clientNameShort := c.FormValue("client_name_short", os.Getenv("WHATSAPP_CLIENT_NAME_SHORT"))
 	reqVersionClientMajor := c.FormValue("client_version_major", os.Getenv("WHATSAPP_CLIENT_VERSION_MAJOR"))
 	reqVersionClientMinor := c.FormValue("client_version_minor", os.Getenv("WHATSAPP_CLIENT_VERSION_MINOR"))
 	reqVersionClientBuild := c.FormValue("client_version_build", os.Getenv("WHATSAPP_CLIENT_VERSION_BUILD"))

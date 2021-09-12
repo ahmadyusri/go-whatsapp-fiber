@@ -1,5 +1,7 @@
 .PHONY: test security run stop
 
+WHATSAPP_CLIENT_NAME_SHORT = "Klik Adzkia Whatsapp"
+WHATSAPP_CLIENT_NAME_LONG = "Klik Adzkia Whatsapp REST Api"
 SERVER_PORT = 3000
 SERVER_URL = "0.0.0.0:$(SERVER_PORT)"
 SERVER_READ_TIMEOUT = 60
@@ -23,11 +25,13 @@ swag:
 	swag init
 
 docker_build_image:
-	docker build -t cooljar-go-whatsapp-fiber .
+	docker build -t klik-adzkia-go-whatsapp-fiber .
 
 docker_app: docker_build_image
 	docker run -d \
-        		--name cooljar-go-whatsapp-fiber-c \
+        		--name klik-adzkia-go-whatsapp-fiber-c \
+        		-e WHATSAPP_CLIENT_NAME_SHORT=$(WHATSAPP_CLIENT_NAME_SHORT) \
+        		-e WHATSAPP_CLIENT_NAME_LONG=$(WHATSAPP_CLIENT_NAME_LONG) \
         		-p $(SERVER_PORT):$(SERVER_PORT) \
         		-e SERVER_URL=$(SERVER_URL) \
         		-e SERVER_READ_TIMEOUT=$(SERVER_READ_TIMEOUT) \
@@ -37,11 +41,11 @@ docker_app: docker_build_image
         		-e WHATSAPP_CLIENT_VERSION_MINOR=$(WHATSAPP_CLIENT_VERSION_MINOR) \
         		-e WHATSAPP_CLIENT_VERSION_BUILD=$(WHATSAPP_CLIENT_VERSION_BUILD) \
         		-e WHATSAPP_CLIENT_SESSION_PATH=$(WHATSAPP_CLIENT_SESSION_PATH) \
-        		cooljar-go-whatsapp-fiber
+        		klik-adzkia-go-whatsapp-fiber
 
 run: swag docker_app
 
 stop:
-	docker container stop cooljar-go-whatsapp-fiber-c
-	docker container rm cooljar-go-whatsapp-fiber-c
-	docker rmi cooljar-go-whatsapp-fiber
+	docker container stop klik-adzkia-go-whatsapp-fiber-c
+	docker container rm klik-adzkia-go-whatsapp-fiber-c
+	docker rmi klik-adzkia-go-whatsapp-fiber

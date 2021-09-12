@@ -1,3 +1,6 @@
+export WHATSAPP_CLIENT_NAME_SHORT="Klik Adzkia Whatsapp"
+export WHATSAPP_CLIENT_NAME_LONG="Klik Adzkia Whatsapp REST Api"
+
 # Environment settings:
 export SERVER_URL="0.0.0.0:3000"
 export SERVER_READ_TIMEOUT=60
