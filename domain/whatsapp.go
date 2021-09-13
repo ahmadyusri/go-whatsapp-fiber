@@ -48,6 +48,7 @@ type WaWebClient struct {
 type WaWeb struct {
 	Server WaWebServer
 	Client WaWebClient
+	User interface{}
 }
 
 type WhatsappWeb struct {

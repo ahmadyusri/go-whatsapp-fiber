@@ -4,14 +4,15 @@ import (
 	"encoding/gob"
 	"errors"
 	"fmt"
+	"os"
+	"strings"
+	"time"
+
 	"github.com/Rhymen/go-whatsapp"
 	"github.com/Rhymen/go-whatsapp/binary/proto"
 	"github.com/cooljar/go-whatsapp-fiber/domain"
 	"github.com/cooljar/go-whatsapp-fiber/utils"
 	"github.com/cooljar/go-whatsapp-fiber/utils/log"
-	"os"
-	"strings"
-	"time"
 )
 
 type whatsappUsecase struct {
@@ -102,6 +103,8 @@ func (w *whatsappUsecase) GetInfo() (info domain.WaWeb, err error) {
 	info.Server.Version.Major = v[0]
 	info.Server.Version.Minor = v[1]
 	info.Server.Version.Build = v[2]
+
+	info.User = w.whatsappConn.Info
 	if err != nil {
 		panic(err)
 	}
