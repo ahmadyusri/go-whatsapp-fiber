@@ -119,6 +119,7 @@ func (w *WhatsappHandler) Auth(c *fiber.Ctx) error {
 		Data: fiber.Map{
 			"token":      t,
 			"expired_in": claims["exp"],
+                        "expired_time": JWTExpiredTime,
 		},
 		Message: "Token Generate",
 	})
