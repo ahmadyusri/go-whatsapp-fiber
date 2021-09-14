@@ -23,8 +23,10 @@ func NewWhatsappHandler(whatsappUsecase domain.WhatsappUsecase, rPublic, rPrivat
 	}
 
 	rWa := rPrivate.Group("/")
+	rWa.Post("/take-over", handler.TakeOver)
 	rWa.Post("/login", handler.Login)
 	rWa.Get("/info", handler.GetInfo)
+	rWa.Get("/connection-status", handler.GetConnection)
 	rWa.Post("/send-text", handler.SendText)
 	rWa.Post("/send-location", handler.SendLocation)
 	rWa.Post("/send-document", handler.SendDocument)
@@ -33,6 +35,31 @@ func NewWhatsappHandler(whatsappUsecase domain.WhatsappUsecase, rPublic, rPrivat
 	rWa.Post("/send-video", handler.SendVideo)
 	rWa.Get("/groups/:jid", handler.Groups)
 	rWa.Post("/logout", handler.Logout)
+}
+
+// TakeOver func take over whatsapp web.
+// @Description TakeOver to whatsapp web.
+// @Summary Take Over whatsapp web
+// @Tags Whatsapp
+// @Produce json
+// @Param Authorization header string true "JWT Token"
+// @Success 200 {file} file "Description"
+// @Success 200 {object} domain.JSONResult{data=interface{},message=string} "Description"
+// @Failure 422 {object} []domain.HTTPErrorValidation
+// @Failure 400 {object} domain.HTTPError
+// @Failure 404 {object} domain.HTTPError
+// @Failure 500 {object} domain.HTTPError
+// @Router /v1/whatsapp/take-over [post]
+func (w *WhatsappHandler) TakeOver(c *fiber.Ctx) error {
+	info, err := w.WhatsappUsecase.TakeOver()
+	if err != nil {
+		return domain.NewHttpError(c, fiber.StatusBadRequest, err)
+	}
+
+	return c.JSON(domain.JSONResult{
+		Data: info,
+		Message: "Success",
+	})
 }
 
 // Login func login whatsapp web.
@@ -97,6 +124,30 @@ func (w *WhatsappHandler) Login(c *fiber.Ctx) error {
 	qrCodePng, _ := qrcode.Encode(qrCodeStr, qrcode.Medium, 256)
 	c.Set("content-type", "image/png")
 	return c.Send(qrCodePng)
+}
+
+// GetConnection func for get Connection Status.
+// @Summary get Connection Status
+// @Description Get Connection Status.
+// @Tags Info
+// @Produce json
+// @Param Authorization header string true "JWT Token"
+// @Success 200 {object} domain.JSONResult{data=bool,message=string} "Description"
+// @Failure 422 {object} []domain.HTTPErrorValidation
+// @Failure 400 {object} domain.HTTPError
+// @Failure 404 {object} domain.HTTPError
+// @Failure 500 {object} domain.HTTPError
+// @Router /v1/whatsapp/connection-status [get]
+func (w *WhatsappHandler) GetConnection(c *fiber.Ctx) error {
+	connection, err := w.WhatsappUsecase.GetConnection()
+	if err != nil {
+		return domain.NewHttpError(c, fiber.StatusInternalServerError, err)
+	}
+
+	return c.JSON(domain.JSONResult{
+		Data: connection,
+		Message: "Success",
+	})
 }
 
 // GetInfo func for get info metadata.

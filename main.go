@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Rhymen/go-whatsapp"
+	"github.com/cooljar/go-whatsapp-fiber/domain"
 	_frontendHttpDelivery "github.com/cooljar/go-whatsapp-fiber/frontend/delivery/http"
 	"github.com/cooljar/go-whatsapp-fiber/frontend/delivery/http/configs"
 	_frontendDeliveryMiddleware "github.com/cooljar/go-whatsapp-fiber/frontend/delivery/http/middleware"
@@ -120,8 +121,8 @@ func main() {
 
 	//Restore session if exists
 	err = whatsappUsecae.RestoreSession()
-	if err != nil {
-		exitf("Error restoring whatsapp session. ", err)
+	if err == nil {
+		fmt.Println("Restoring whatsapp session success")
 	}
 
 	// Define Fiber config.
@@ -131,6 +132,12 @@ func main() {
 	middL := _frontendDeliveryMiddleware.InitMiddleware(app)
 	app.Use(middL.CORS())
 	app.Use(middL.LOGGER())
+
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.JSON(domain.JSONResult{
+			Message: "Success",
+		})
+	})
 
 	// router for public access
 	rPublic := app.Group("/api/v1")

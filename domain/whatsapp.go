@@ -74,8 +74,10 @@ func (w *WhatsappWeb) ToJSON() []byte {
 // WhatsappUsecase represent the whatsapp's use cases
 type WhatsappUsecase interface {
 	RestoreSession() error
+	TakeOver() (info string, err error)
 	Login(vMajor, vMinor, vBuild, timeout, reconnect int, clientNameShort, clientNameLong string) (qrCode string, err error)
 	GetInfo() (info WaWeb, err error)
+	GetConnection() (connection bool, err error)
 	SendText(form WaSendTextForm) (msgId string, err error)
 	SendLocation(form WaSendLocationForm) (msgId string, err error)
 	SendFile(form WaSendFileForm, fileType string) (msgId string, err error)

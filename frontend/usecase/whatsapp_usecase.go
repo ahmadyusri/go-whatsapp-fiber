@@ -29,6 +29,18 @@ func (w *whatsappUsecase) Login(vMajor, vMinor, vBuild, timeout, reconnect int, 
 		return
 	}
 
+	//load saved session
+	read, errRead := readSession()
+	if errRead == nil {
+		fmt.Println("Session Exists, " + read.ClientId)
+		takeOver, errTake := w.TakeOver()
+		if errTake == nil {
+			fmt.Println("Take Over Session, " + takeOver)
+			err = errors.New("session actived with session file")
+			return
+		}
+	}
+
 	w.whatsappConn, err = whatsapp.NewConnWithOptions(&whatsapp.Options{
 		// timeout
 		Timeout: time.Duration(timeout) * time.Second,
@@ -88,6 +100,17 @@ func (w *whatsappUsecase) Login(vMajor, vMinor, vBuild, timeout, reconnect int, 
 	}
 }
 
+func (w *whatsappUsecase) TakeOver() (info string, err error) {
+	restore := w.RestoreSession()
+	if restore != nil {
+		err = restore
+	} else {
+		info = "Connected"
+	}
+
+	return
+}
+
 func (w *whatsappUsecase) GetInfo() (info domain.WaWeb, err error) {
 	if w.whatsappConn.GetConnected() == false || w.whatsappConn.GetLoggedIn() == false {
 		err = errors.New("invalid session, please login")
@@ -109,6 +132,11 @@ func (w *whatsappUsecase) GetInfo() (info domain.WaWeb, err error) {
 		panic(err)
 	}
 
+	return
+}
+
+func (w *whatsappUsecase) GetConnection() (connection bool, err error) {
+	connection = w.whatsappConn.GetConnected() && w.whatsappConn.GetLoggedIn()
 	return
 }
 
@@ -241,22 +269,13 @@ func (w *whatsappUsecase) Logout() (err error) {
 func (w *whatsappUsecase) RestoreSession() error {
 	//load saved session
 	session, err := readSession()
-	if err == nil {
-		//restore session
-		session, err = w.whatsappConn.RestoreWithSession(session)
-		if err != nil {
-			_ = os.Remove(os.Getenv("WHATSAPP_CLIENT_SESSION_PATH") + "/whatsappSession.gob")
-			return err
-		}
-
-		//save session
-		err = writeSession(session)
-		if err != nil {
-			return err
-		}
-
-		w.whatsappConn.AddHandler(utils.WhatsappHandler{})
+	if err != nil {
+		return err
 	}
+
+	//restore session
+	session, err = w.whatsappConn.RestoreWithSession(session)
+	w.whatsappConn.AddHandler(utils.WhatsappHandler{})
 
 	return nil
 }
@@ -265,7 +284,6 @@ func readSession() (whatsapp.Session, error) {
 	fmt.Println(os.TempDir())
 
 	session := whatsapp.Session{}
-	//file, err := os.Open(os.TempDir() + "/whatsappSession.gob")
 	file, err := os.Open(os.Getenv("WHATSAPP_CLIENT_SESSION_PATH") + "/whatsappSession.gob")
 	if err != nil {
 		return session, err

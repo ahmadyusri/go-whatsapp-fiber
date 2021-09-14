@@ -16,5 +16,7 @@ RUN go mod tidy
 # Build the application server.
 RUN go build -o binary .
 
+HEALTHCHECK --interval=5s --timeout=3s CMD ["sh", "-c", "curl http://127.0.0.1:3000/health || exit 1"]
+
 # Command to run when starting the container.
 ENTRYPOINT ["/app/binary"]

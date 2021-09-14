@@ -2,8 +2,9 @@ package utils
 
 import (
 	"fmt"
-	"github.com/Rhymen/go-whatsapp"
 	"os"
+
+	"github.com/Rhymen/go-whatsapp"
 )
 
 type WhatsappHandler struct{}
