@@ -21,10 +21,10 @@ import (
 
 func init() {
 	if os.Getenv("WHATSAPP_CLIENT_NAME_SHORT") == "" {
-		os.Setenv("WHATSAPP_CLIENT_NAME_SHORT", "Klik Adzkia Whatsapp")
+		exitf("WHATSAPP_CLIENT_NAME_SHORT env is required")
 	}
 	if os.Getenv("WHATSAPP_CLIENT_NAME_LONG") == "" {
-		os.Setenv("WHATSAPP_CLIENT_NAME_LONG", "Klik Adzkia Whatsapp Rest API")
+		exitf("WHATSAPP_CLIENT_NAME_LONG env is required")
 	}
 
 	if os.Getenv("SERVER_KEY") == "" {
@@ -37,24 +37,41 @@ func init() {
 		exitf("SERVER_READ_TIMEOUT env is required")
 	}
 
+	if os.Getenv("DB_DRIVER") == "" {
+		exitf("DB_DRIVER env is required")
+	}
 	if os.Getenv("DB_HOST") == "" {
 		exitf("DB_HOST env is required")
 	}
-
 	if os.Getenv("DB_USERNAME") == "" {
 		exitf("DB_USERNAME env is required")
 	}
-
 	if _, exists := os.LookupEnv("DB_PASSWORD"); !exists {
 		exitf("DB_PASSWORD env is required")
 	}
-
 	if os.Getenv("DB_NAME") == "" {
 		exitf("DB_NAME env is required")
 	}
-
 	if os.Getenv("DB_PORT") == "" {
 		exitf("DB_PORT env is required")
+	}
+	if os.Getenv("DB_TABLE_NAME") == "" {
+		exitf("DB_TABLE_NAME env is required")
+	}
+	if os.Getenv("DB_TABLE_FIELD_ID") == "" {
+		exitf("DB_TABLE_FIELD_ID env is required")
+	}
+	if os.Getenv("DB_TABLE_FIELD_NAME") == "" {
+		exitf("DB_TABLE_FIELD_NAME env is required")
+	}
+	if os.Getenv("DB_TABLE_FIELD_TYPE") == "" {
+		exitf("DB_TABLE_FIELD_TYPE env is required")
+	}
+	if os.Getenv("DB_TABLE_TYPE_ALLOW") == "" {
+		exitf("DB_TABLE_TYPE_ALLOW env is required")
+	}
+	if os.Getenv("DB_TABLE_FIELD_TOKEN") == "" {
+		exitf("DB_TABLE_FIELD_TOKEN env is required")
 	}
 
 	if os.Getenv("JWT_SECRET_KEY") == "" {

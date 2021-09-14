@@ -16,9 +16,12 @@ Prequisites package:
 Optional package:
 * [gosec](https://github.com/securego/gosec) Golang Security Checker. Inspects source code for security problems by scanning the Go AST
 
+## Config 
+1. Rename `.env.example` to `.env` 
+2. fill it environment with your make setting.
+
 ### Running On Docker Container
-1. Rename `Makefile.example` to `Makefile` and fill it with your make setting.
-2. Run project by using following command:
+- Run project by using following command:
 ```bash
 $ make run
 
@@ -26,7 +29,7 @@ $ make run
 #   - Generate API docs by Swagger
 #   - Build and run Docker containers
 ```
-Stop application by using following command:
+- Stop application by using following command:
 ```bash
 $ make stop
 
@@ -35,21 +38,28 @@ $ make stop
 #   - remove image
 ```
 
+- Run Container without Rebuid by using following command:
+```bash
+$ make docker_run_image
+
+# Process:
+#   - Run Docker containers, if image not found will build image
+```
+
 ### Running On Local Machine
 Below is the instructions to run this project on your local machine:
-1. Rename `run.sh.example` to `run.sh` and fill it with your environment values.
-2. Open new `terminal`.
-3. Set `run.sh` file permission.
+1. Open new `terminal`.
+2. Set `run.sh` file permission.
 ```bash
 $ chmod +x ./run.sh
 ```
-4. Run application from terminal by using following command:
+3. Run application from terminal by using following command:
 ```bash
 $ ./run.sh
 ```
 
 ### API Access
-Go to your API Docs page: [127.0.0.1:3000/swagger/index.html](http://127.0.0.1:3000/swagger/index.html)
+Go to your API Docs page: [127.0.0.1:3000/swagger/index.html](http://127.0.0.1:3000/swagger/index.html) and fill Basic Auth with `BASIC_AUTH_USERNAME` and `BASIC_AUTH_PASSWORD`, let `BASIC_AUTH_USERNAME` and `BASIC_AUTH_PASSWORD` empty if you want without basic auth
 <br>
 API Docs page will be look like:
 <br><img src="https://raw.githubusercontent.com/cooljar/go-whatsapp-fiber/main/sc.png" width="500">
@@ -59,7 +69,7 @@ Below is the instructions to perform messaging:
 * Prepare your smartphone and make sure the internet is active.
 * Hit the [Login](http://127.0.0.1:3000/swagger/index.html#/Whatsapp/post_v1_whatsapp_login) endpoint, you will see a QR Code if request was success.
   <br><img src="https://raw.githubusercontent.com/cooljar/go-whatsapp-fiber/main/qr.png" width="250">
-  <br>Check your `Makefile` setting if an error occurred.
+  <br>Check your `.env` environment setting if an error occurred.
 * Scant it, and done.
 Now you can perforn all endpoint to send a message.
 
@@ -78,6 +88,7 @@ $ make test
 
 ## Authors
 * **Fajar Rizky** - *Initial Work* - [cooljar](https://github.com/cooljar)
+* **Ahmad Yusri** - *Reconfig* - [ahmadyusri](https://github.com/ahmadyusri)
 
 ## More
 -------

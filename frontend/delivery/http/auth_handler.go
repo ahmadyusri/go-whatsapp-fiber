@@ -60,7 +60,7 @@ func (w *WhatsappHandler) Auth(c *fiber.Ctx) error {
 	}
 	api_token := Authorization[1]
 
-	db, err := sql.Open("mysql", os.Getenv("DB_USERNAME")+":"+os.Getenv("DB_PASSWORD")+"@tcp("+os.Getenv("DB_HOST")+":"+os.Getenv("DB_PORT")+")/"+os.Getenv("DB_NAME"))
+	db, err := sql.Open(os.Getenv("DB_DRIVER"), os.Getenv("DB_USERNAME")+":"+os.Getenv("DB_PASSWORD")+"@tcp("+os.Getenv("DB_HOST")+":"+os.Getenv("DB_PORT")+")/"+os.Getenv("DB_NAME"))
 
 	// if there is an error opening the connection, handle it
 	if err != nil {
@@ -76,7 +76,7 @@ func (w *WhatsappHandler) Auth(c *fiber.Ctx) error {
 
 	var tag Tag
 	// perform a db.Query select
-	err = db.QueryRow("select id, nama, tipe from pengguna where api_token = '"+api_token+"'").Scan(&tag.ID, &tag.Nama, &tag.Tipe)
+	err = db.QueryRow("select "+os.Getenv("DB_TABLE_FIELD_ID")+", "+os.Getenv("DB_TABLE_FIELD_NAME")+", "+os.Getenv("DB_TABLE_FIELD_TYPE")+" from "+os.Getenv("DB_TABLE_NAME")+" where "+os.Getenv("DB_TABLE_FIELD_TOKEN")+" = '"+api_token+"'").Scan(&tag.ID, &tag.Nama, &tag.Tipe)
 
 	// if there is an error selecting, handle it
 	if err != nil {
@@ -87,7 +87,7 @@ func (w *WhatsappHandler) Auth(c *fiber.Ctx) error {
 	}
 
 	tipe := tag.Tipe
-	if Strstr(tipe, "super_admin") == "" {
+	if Strstr(tipe, os.Getenv("DB_TABLE_TYPE_ALLOW")) == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(domain.JSONResult{
 			Code:    401,
 			Message: "Anda tidak memiliki Akses.",
@@ -117,9 +117,9 @@ func (w *WhatsappHandler) Auth(c *fiber.Ctx) error {
 
 	return c.JSON(domain.JSONResult{
 		Data: fiber.Map{
-			"token":      t,
-			"expired_in": claims["exp"],
-                        "expired_time": JWTExpiredTime,
+			"token":        t,
+			"expired_in":   claims["exp"],
+			"expired_time": JWTExpiredTime,
 		},
 		Message: "Token Generate",
 	})
