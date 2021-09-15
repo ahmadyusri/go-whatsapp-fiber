@@ -93,14 +93,17 @@ func (w *WhatsappHandler) Auth(c *fiber.Ctx) error {
 			Message: "Anda tidak memiliki Akses.",
 		})
 	}
-	nama := tag.Nama
+
+	user_id := tag.ID
+	user_name := tag.Nama
 
 	// Create token
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	// Set claims
 	claims := token.Claims.(jwt.MapClaims)
-	claims["name"] = nama
+	claims["user_id"] = user_id
+	claims["user_name"] = user_name
 
 	JWTExpiredTime, err := strconv.Atoi(os.Getenv("JWT_SECRET_KEY_EXPIRE_MINUTES"))
 	if err != nil {

@@ -19,6 +19,15 @@ type whatsappUsecase struct {
 	whatsappConn *whatsapp.Conn
 }
 
+func getWhatsappSession() (path string, err error) {
+	pathSession := os.Getenv("WHATSAPP_CLIENT_SESSION_PATH")
+	fileSession := "whatsappSession.gob"
+	pathSession = pathSession + "/" + fileSession
+	path = pathSession
+
+	return
+}
+
 func NewWhatsappUsecase(conn *whatsapp.Conn) domain.WhatsappUsecase {
 	return &whatsappUsecase{whatsappConn: conn}
 }
@@ -253,6 +262,13 @@ func (w *whatsappUsecase) Groups(jid string) (g string, err error) {
 }
 
 func (w *whatsappUsecase) Logout() (err error) {
+	// Delete Session Whatsapp
+	pathSession, _ := getWhatsappSession()
+	_, errOpen := os.Open(pathSession)
+	if errOpen == nil {
+		_ = os.Remove(pathSession)
+	}
+
 	if w.whatsappConn.GetConnected() == false || w.whatsappConn.GetLoggedIn() == false {
 		err = errors.New("invalid session, please login")
 		return
@@ -284,7 +300,9 @@ func readSession() (whatsapp.Session, error) {
 	fmt.Println(os.TempDir())
 
 	session := whatsapp.Session{}
-	file, err := os.Open(os.Getenv("WHATSAPP_CLIENT_SESSION_PATH") + "/whatsappSession.gob")
+
+	pathSession, _ := getWhatsappSession()
+	file, err := os.Open(pathSession)
 	if err != nil {
 		return session, err
 	}
@@ -305,8 +323,8 @@ func readSession() (whatsapp.Session, error) {
 }
 
 func writeSession(session whatsapp.Session) error {
-	fmt.Println(os.TempDir())
-	file, err := os.Create(os.Getenv("WHATSAPP_CLIENT_SESSION_PATH") + "/whatsappSession.gob")
+	pathSession, _ := getWhatsappSession()
+	file, err := os.Create(pathSession)
 	if err != nil {
 		return err
 	}
@@ -485,13 +503,6 @@ func sendDocument(w *whatsappUsecase, form domain.WaSendFileForm) (msgId string,
 }
 
 func logout(wac *whatsapp.Conn) error {
-	// Delete Session Whatsapp
-	pathSession := os.Getenv("WHATSAPP_CLIENT_SESSION_PATH") + "/whatsappSession.gob"
-	_, errOpen := os.Open(pathSession)
-	if errOpen == nil {
-		_ = os.Remove(pathSession)
-	}
-
 	defer func() {
 		fmt.Println("Disconnecting..")
 		_, _ = wac.Disconnect()

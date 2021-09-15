@@ -13,13 +13,13 @@ import (
 
 type WhatsappHandler struct {
 	WhatsappUsecase domain.WhatsappUsecase
-	Validate *validator.Validate
+	Validate        *validator.Validate
 }
 
 func NewWhatsappHandler(whatsappUsecase domain.WhatsappUsecase, rPublic, rPrivate fiber.Router) {
 	handler := &WhatsappHandler{
 		WhatsappUsecase: whatsappUsecase,
-		Validate: utils.NewValidator(),
+		Validate:        utils.NewValidator(),
 	}
 
 	rWa := rPrivate.Group("/")
@@ -57,7 +57,7 @@ func (w *WhatsappHandler) TakeOver(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(domain.JSONResult{
-		Data: info,
+		Data:    info,
 		Message: "Success",
 	})
 }
@@ -145,7 +145,7 @@ func (w *WhatsappHandler) GetConnection(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(domain.JSONResult{
-		Data: connection,
+		Data:    connection,
 		Message: "Success",
 	})
 }
@@ -169,7 +169,7 @@ func (w *WhatsappHandler) GetInfo(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(domain.JSONResult{
-		Data: info,
+		Data:    info,
 		Message: "Success",
 	})
 }
@@ -211,7 +211,7 @@ func (w *WhatsappHandler) SendText(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(domain.JSONResult{
-		Data: map[string]string{"message_id": msgId},
+		Data:    map[string]string{"message_id": msgId},
 		Message: "Success",
 	})
 }
@@ -261,7 +261,7 @@ func (w *WhatsappHandler) SendLocation(c *fiber.Ctx) error {
 	msgId, err := w.WhatsappUsecase.SendLocation(form)
 
 	return c.JSON(domain.JSONResult{
-		Data: map[string]string{"message_id": msgId},
+		Data:    map[string]string{"message_id": msgId},
 		Message: "Success",
 	})
 }
@@ -311,7 +311,7 @@ func (w *WhatsappHandler) SendImage(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(domain.JSONResult{
-		Data: map[string]string{"message_id": msgId},
+		Data:    map[string]string{"message_id": msgId},
 		Message: "Success",
 	})
 }
@@ -361,7 +361,7 @@ func (w *WhatsappHandler) SendAudio(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(domain.JSONResult{
-		Data: map[string]string{"message_id": msgId},
+		Data:    map[string]string{"message_id": msgId},
 		Message: "Success",
 	})
 }
@@ -411,7 +411,7 @@ func (w *WhatsappHandler) SendVideo(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(domain.JSONResult{
-		Data: map[string]string{"message_id": msgId},
+		Data:    map[string]string{"message_id": msgId},
 		Message: "Success",
 	})
 }
@@ -461,7 +461,7 @@ func (w *WhatsappHandler) SendDocument(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(domain.JSONResult{
-		Data: map[string]string{"message_id": msgId},
+		Data:    map[string]string{"message_id": msgId},
 		Message: "Success",
 	})
 }
@@ -497,7 +497,7 @@ func (w *WhatsappHandler) Groups(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(domain.JSONResult{
-		Data: modelGroup,
+		Data:    modelGroup,
 		Message: "Success",
 	})
 }
@@ -521,7 +521,7 @@ func (w *WhatsappHandler) Logout(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(domain.JSONResult{
-		Data: "Logout",
+		Data:    "Logout",
 		Message: "Success",
 	})
 }
