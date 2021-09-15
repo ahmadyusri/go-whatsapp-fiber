@@ -1,10 +1,12 @@
 package usecase
 
 import (
+	"context"
 	"encoding/gob"
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -13,10 +15,15 @@ import (
 	"github.com/ahmadyusri/go-whatsapp-fiber/domain"
 	"github.com/ahmadyusri/go-whatsapp-fiber/utils"
 	"github.com/ahmadyusri/go-whatsapp-fiber/utils/log"
+	"github.com/go-redis/redis/v8"
+	"github.com/vmihailenco/msgpack/v5"
 )
+
+var ctx = context.Background()
 
 type whatsappUsecase struct {
 	whatsappConn *whatsapp.Conn
+	redisConn    *redis.Client
 }
 
 func getWhatsappSession() (path string, err error) {
@@ -29,7 +36,18 @@ func getWhatsappSession() (path string, err error) {
 }
 
 func NewWhatsappUsecase(conn *whatsapp.Conn) domain.WhatsappUsecase {
-	return &whatsappUsecase{whatsappConn: conn}
+	// Init Redis DB
+	REDIS_DBINT, err := strconv.Atoi(os.Getenv("REDIS_DB"))
+	rdb := &redis.Client{}
+	if err == nil {
+		rdb = redis.NewClient(&redis.Options{
+			Addr:     os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT"),
+			Password: os.Getenv("REDIS_PASSWORD"), // no password set
+			DB:       REDIS_DBINT,                 // use default DB
+		})
+	}
+
+	return &whatsappUsecase{whatsappConn: conn, redisConn: rdb}
 }
 
 func (w *whatsappUsecase) Login(vMajor, vMinor, vBuild, timeout, reconnect int, clientNameShort, clientNameLong string) (qrCodeStr string, err error) {
@@ -132,14 +150,24 @@ func (w *whatsappUsecase) GetInfo() (info domain.WaWeb, err error) {
 	info.Client.Version.Build = v[2]
 
 	v, err = whatsapp.CheckCurrentServerVersion()
+	if err != nil {
+		panic(err)
+	}
 	info.Server.Version.Major = v[0]
 	info.Server.Version.Minor = v[1]
 	info.Server.Version.Build = v[2]
 
-	info.User = w.whatsappConn.Info
-	if err != nil {
-		panic(err)
+	InfoUser := w.whatsappConn.Info
+	b, errRedis := w.redisConn.Get(ctx, "whatsapp-api-battery").Bytes()
+	if errRedis == nil {
+		var item whatsapp.BatteryMessage
+		errUnmarsal := msgpack.Unmarshal(b, &item)
+		if errUnmarsal == nil {
+			InfoUser.Battery = item.Percentage
+			InfoUser.Plugged = item.Plugged
+		}
 	}
+	info.User = InfoUser
 
 	return
 }
@@ -297,8 +325,6 @@ func (w *whatsappUsecase) RestoreSession() error {
 }
 
 func readSession() (whatsapp.Session, error) {
-	fmt.Println(os.TempDir())
-
 	session := whatsapp.Session{}
 
 	pathSession, _ := getWhatsappSession()

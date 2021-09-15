@@ -74,6 +74,19 @@ func init() {
 		exitf("DB_TABLE_FIELD_TOKEN env is required")
 	}
 
+	if os.Getenv("REDIS_HOST") == "" {
+		exitf("REDIS_HOST env is required")
+	}
+	if os.Getenv("REDIS_PORT") == "" {
+		exitf("REDIS_PORT env is required")
+	}
+	if _, exists := os.LookupEnv("REDIS_PASSWORD"); !exists {
+		exitf("REDIS_PASSWORD env is required")
+	}
+	if os.Getenv("REDIS_DB") == "" {
+		exitf("REDIS_DB env is required")
+	}
+
 	if os.Getenv("JWT_SECRET_KEY") == "" {
 		exitf("JWT_SECRET_KEY env is required")
 	}

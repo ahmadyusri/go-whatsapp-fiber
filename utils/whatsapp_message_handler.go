@@ -1,8 +1,16 @@
 package utils
 
 import (
+	"context"
+	"os"
+	"strconv"
+
 	"github.com/Rhymen/go-whatsapp"
+	"github.com/go-redis/redis/v8"
+	"github.com/vmihailenco/msgpack/v5"
 )
+
+var ctx = context.Background()
 
 type WhatsappHandler struct{}
 
@@ -61,11 +69,20 @@ func (WhatsappHandler) HandleContactMessage(message whatsapp.ContactMessage) {
 }
 
 func (WhatsappHandler) HandleBatteryMessage(message whatsapp.BatteryMessage) {
-	// fmt.Println("------------------------------")
-	// fmt.Println("Plugged: ", message.Plugged)
-	// fmt.Println("Powersave: ", message.Powersave)
-	// fmt.Println("Percentage: ", message.Percentage)
-	// fmt.Println("------------------------------")
+	REDIS_DBINT, err := strconv.Atoi(os.Getenv("REDIS_DB"))
+	if err != nil {
+		return
+	}
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT"),
+		Password: os.Getenv("REDIS_PASSWORD"),
+		DB:       REDIS_DBINT,
+	})
+	baterryData, errPack := msgpack.Marshal(message)
+	if errPack != nil {
+		return
+	}
+	rdb.Set(ctx, "whatsapp-api-battery", baterryData, 0).Err()
 }
 
 func (WhatsappHandler) HandleNewContact(contact whatsapp.Contact) {
