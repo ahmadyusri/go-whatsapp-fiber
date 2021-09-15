@@ -485,16 +485,17 @@ func sendDocument(w *whatsappUsecase, form domain.WaSendFileForm) (msgId string,
 }
 
 func logout(wac *whatsapp.Conn) error {
-	defer func() {
-		fmt.Println("Disconnecting..")
-		_, _ = wac.Disconnect()
-	}()
-
+	// Delete Session Whatsapp
 	pathSession := os.Getenv("WHATSAPP_CLIENT_SESSION_PATH") + "/whatsappSession.gob"
 	_, errOpen := os.Open(pathSession)
 	if errOpen == nil {
 		_ = os.Remove(pathSession)
 	}
+
+	defer func() {
+		fmt.Println("Disconnecting..")
+		_, _ = wac.Disconnect()
+	}()
 
 	err := wac.Logout()
 	if err != nil {

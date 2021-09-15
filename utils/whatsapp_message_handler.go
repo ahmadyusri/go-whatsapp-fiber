@@ -1,16 +1,13 @@
 package utils
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/Rhymen/go-whatsapp"
 )
 
 type WhatsappHandler struct{}
 
 func (WhatsappHandler) HandleError(err error) {
-	fmt.Fprintf(os.Stderr, "%v", err)
+	// fmt.Fprintf(os.Stderr, "%v", err)
 }
 
 func (WhatsappHandler) HandleTextMessage(message whatsapp.TextMessage) {
