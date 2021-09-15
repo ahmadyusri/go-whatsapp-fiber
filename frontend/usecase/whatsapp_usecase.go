@@ -10,9 +10,9 @@ import (
 
 	"github.com/Rhymen/go-whatsapp"
 	"github.com/Rhymen/go-whatsapp/binary/proto"
-	"github.com/cooljar/go-whatsapp-fiber/domain"
-	"github.com/cooljar/go-whatsapp-fiber/utils"
-	"github.com/cooljar/go-whatsapp-fiber/utils/log"
+	"github.com/ahmadyusri/go-whatsapp-fiber/domain"
+	"github.com/ahmadyusri/go-whatsapp-fiber/utils"
+	"github.com/ahmadyusri/go-whatsapp-fiber/utils/log"
 )
 
 type whatsappUsecase struct {
@@ -306,7 +306,6 @@ func readSession() (whatsapp.Session, error) {
 
 func writeSession(session whatsapp.Session) error {
 	fmt.Println(os.TempDir())
-	//file, err := os.Create(os.TempDir() + "/whatsappSession.gob")
 	file, err := os.Create(os.Getenv("WHATSAPP_CLIENT_SESSION_PATH") + "/whatsappSession.gob")
 	if err != nil {
 		return err
@@ -491,12 +490,16 @@ func logout(wac *whatsapp.Conn) error {
 		_, _ = wac.Disconnect()
 	}()
 
+	pathSession := os.Getenv("WHATSAPP_CLIENT_SESSION_PATH") + "/whatsappSession.gob"
+	_, errOpen := os.Open(pathSession)
+	if errOpen == nil {
+		_ = os.Remove(pathSession)
+	}
+
 	err := wac.Logout()
 	if err != nil {
 		return err
 	}
-
-	_ = os.Remove(os.TempDir() + "/whatsappSession.gob")
 
 	fmt.Println("Logout success..")
 

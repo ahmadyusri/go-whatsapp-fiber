@@ -1,10 +1,11 @@
 package utils
 
 import (
-	"github.com/cooljar/go-whatsapp-fiber/domain"
-	"github.com/go-playground/validator/v10"
 	"reflect"
 	"strings"
+
+	"github.com/ahmadyusri/go-whatsapp-fiber/domain"
+	"github.com/go-playground/validator/v10"
 )
 
 // NewValidator func for create a new validator for model fields.

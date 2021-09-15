@@ -4,8 +4,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/cooljar/go-whatsapp-fiber/domain"
-	"github.com/cooljar/go-whatsapp-fiber/utils"
+	"github.com/ahmadyusri/go-whatsapp-fiber/domain"
+	"github.com/ahmadyusri/go-whatsapp-fiber/utils"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/skip2/go-qrcode"

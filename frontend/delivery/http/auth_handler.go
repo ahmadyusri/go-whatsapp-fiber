@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cooljar/go-whatsapp-fiber/domain"
-	"github.com/cooljar/go-whatsapp-fiber/utils"
+	"github.com/ahmadyusri/go-whatsapp-fiber/domain"
+	"github.com/ahmadyusri/go-whatsapp-fiber/utils"
 	"github.com/go-playground/validator/v10"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
