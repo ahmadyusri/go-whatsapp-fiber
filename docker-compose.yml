@@ -37,4 +37,5 @@ services:
 #Docker Networks
 networks:
   klik-adzkia-network:
+    name: klik-adzkia_klik-adzkia-network
     driver: bridge
