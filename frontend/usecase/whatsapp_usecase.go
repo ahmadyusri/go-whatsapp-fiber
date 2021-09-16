@@ -159,7 +159,9 @@ func (w *whatsappUsecase) GetInfo() (info domain.WaWeb, err error) {
 
 	InfoUser := w.whatsappConn.Info
 	b, errRedis := w.redisConn.Get(ctx, "whatsapp-api-battery").Bytes()
-	if errRedis == nil {
+	if errRedis != nil {
+		fmt.Println("Redis Error", errRedis)
+	} else {
 		var item whatsapp.BatteryMessage
 		errUnmarsal := msgpack.Unmarshal(b, &item)
 		if errUnmarsal == nil {
