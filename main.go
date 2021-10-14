@@ -118,6 +118,11 @@ func init() {
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 // @BasePath /api
 func main() {
+	// Set Timezone
+	loc, err := time.LoadLocation("Asia/Jakarta")
+    // handle err
+    time.Local = loc // -> this is setting the global timezone
+
 	wac, err := whatsapp.NewConnWithOptions(&whatsapp.Options{
 		// timeout
 		Timeout: 20 * time.Second,
